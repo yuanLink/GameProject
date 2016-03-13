@@ -171,6 +171,7 @@ public:
 	bool dialog_show;				//展示对话框
 	bool dialogIsShowing;			//表示当前对话框正在显示
 	int dialog_num;				//目前为止在将第几段话
+	bool nextDialog;				//是否进入下一段对话
 	SPRITE(){
 		x = y = 0;
 		width = height = 64;
@@ -188,6 +189,7 @@ public:
 		dialog_show = false;
 		dialogIsShowing = false;
 		dialog_num = 1;
+		nextDialog = false;
 	}
 	~SPRITE(){}
 	//新增加一个函数，表示“选取的位置”

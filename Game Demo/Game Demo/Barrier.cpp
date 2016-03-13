@@ -11,6 +11,7 @@ Barrier::Barrier(){
 	font_garamond = MakeFont("Garamond", 42);
 	dialog_show = false;
 	dialogIsShowing = false;
+	dialog_num = 1;
 }
 Barrier::~Barrier(){
 	if (feature){
@@ -33,7 +34,7 @@ bool Barrier::isVisible(){
 	return visible;
 }
 
-//No.3 显示发生调查后的对话框，返回值为false时停止调用
+//No.3 显示发生调查后的对话框，返回值为true时停止调用
 bool Barrier::ShowSelectedText(){
 
 	static int index = 0;
@@ -41,14 +42,25 @@ bool Barrier::ShowSelectedText(){
 	if (!dialog_image)
 		return false;
 
-	
-	//然后绘制对话框
-	D3DXVECTOR3 position = { 0, SCREENH - 180, 0 };
-	spriteobj->Draw(dialog_image, NULL, NULL, &position, 0xFFFFFFFF);
-	//紧接着就绘制对话内容
-	PrintFont(font_garamond, 30, SCREENH -128, dialog, D3DCOLOR_XRGB(255, 255, 200));
+	if (index >= dialog_num){
+		nextDialog = false;
+		dialog_show = false;
+		dialogIsShowing = false;
+		index = 0;
+		return true;
+	}
+	if (dialog_show){
+		//然后绘制对话框
+		D3DXVECTOR3 position = { 0, SCREENH - 180, 0 };
+		spriteobj->Draw(dialog_image, NULL, NULL, &position, 0xFFFFFFFF);
+		//紧接着就绘制对话内容
+		PrintFont(font_garamond, 30, SCREENH - 128, dialog, D3DCOLOR_XRGB(255, 255, 200));
+		if (nextDialog)
+			index++;
+	}
+	//然后立刻把nextdialog这个变量设为false
+	nextDialog = false;
 	return false;
-
 }
 
 //No.4 用来读取图片

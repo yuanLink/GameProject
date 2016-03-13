@@ -30,7 +30,8 @@ class FirstStage :public Stage{
 	int numOfBarrier;						//	物品的数量
 	int numOfTool;							//工具的数量
 	bool nextDialog;						//在对话功能上的“空格是否按下的判断”
-
+	bool DialogEvent;				//对话发生事件，可能是解决方案
+	bool canMove;
 	/*
 	对于对话框的处理：
 	首先的首先，如果此时已经发生了调查事件的话（返回值为true的时候，我们应该去检测是否按下了空格键来使对话

@@ -1,8 +1,41 @@
-﻿Build started 2016/3/13 12:04:13.
+﻿Build started 2016/3/13 20:35:04.
      1>Project "E:\GameProject\Game Demo\Game Demo\Game Demo.vcxproj" on node 2 (Build target(s)).
      1>ClCompile:
-         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /I"C:\Program Files (x86)\Microsoft DirectX SDK (June 2010)\Include" /ZI /nologo /W3 /WX- /Od /Oy- /D WIN32 /D _DEBUG /D _WINDOWS /D _MBCS /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt Stuff.cpp
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /I"C:\Program Files (x86)\Microsoft DirectX SDK (June 2010)\Include" /ZI /nologo /W3 /WX- /Od /Oy- /D WIN32 /D _DEBUG /D _WINDOWS /D _MBCS /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt Barrier.cpp Button.cpp FirstStage.cpp MainWindows.cpp MyDirect.cpp MyGame.cpp Stuff.cpp
+         Barrier.cpp
+         Generating Code...
+         Compiling...
          Stuff.cpp
+         MyGame.cpp
+     1>e:\gameproject\game demo\game demo\mygame.cpp(122): warning C4244: '=' : conversion from 'DWORD' to 'float', possible loss of data
+     1>e:\gameproject\game demo\game demo\mygame.cpp(183): warning C4244: '=' : conversion from 'DWORD' to 'float', possible loss of data
+         FirstStage.cpp
+     1>e:\gameproject\game demo\game demo\firststage.cpp(29): warning C4305: '=' : truncation from 'double' to 'float'
+     1>e:\gameproject\game demo\game demo\firststage.cpp(206): warning C4305: '=' : truncation from 'double' to 'float'
+     1>e:\gameproject\game demo\game demo\firststage.cpp(212): warning C4305: '=' : truncation from 'double' to 'float'
+     1>e:\gameproject\game demo\game demo\firststage.cpp(218): warning C4305: '=' : truncation from 'double' to 'float'
+     1>e:\gameproject\game demo\game demo\firststage.cpp(224): warning C4305: '=' : truncation from 'double' to 'float'
+     1>e:\gameproject\game demo\game demo\firststage.cpp(246): warning C4305: '=' : truncation from 'double' to 'float'
+     1>e:\gameproject\game demo\game demo\firststage.cpp(253): warning C4244: '=' : conversion from 'int' to 'float', possible loss of data
+     1>e:\gameproject\game demo\game demo\firststage.cpp(254): warning C4244: '=' : conversion from 'const int' to 'float', possible loss of data
+     1>e:\gameproject\game demo\game demo\firststage.cpp(259): warning C4244: '=' : conversion from 'int' to 'float', possible loss of data
+     1>e:\gameproject\game demo\game demo\firststage.cpp(260): warning C4305: '=' : truncation from 'double' to 'float'
+     1>e:\gameproject\game demo\game demo\firststage.cpp(280): warning C4305: '=' : truncation from 'double' to 'float'
+     1>e:\gameproject\game demo\game demo\firststage.cpp(287): warning C4244: '=' : conversion from 'int' to 'float', possible loss of data
+     1>e:\gameproject\game demo\game demo\firststage.cpp(288): warning C4244: '=' : conversion from 'const int' to 'float', possible loss of data
+     1>e:\gameproject\game demo\game demo\firststage.cpp(293): warning C4244: '=' : conversion from 'int' to 'float', possible loss of data
+     1>e:\gameproject\game demo\game demo\firststage.cpp(294): warning C4305: '=' : truncation from 'double' to 'float'
+     1>e:\gameproject\game demo\game demo\firststage.cpp(378): warning C4244: 'initializing' : conversion from 'float' to 'LONG', possible loss of data
+     1>e:\gameproject\game demo\game demo\firststage.cpp(495): warning C4305: '=' : truncation from 'double' to 'float'
+     1>e:\gameproject\game demo\game demo\firststage.cpp(497): warning C4305: '=' : truncation from 'double' to 'float'
+     1>e:\gameproject\game demo\game demo\firststage.cpp(499): warning C4305: '=' : truncation from 'double' to 'float'
+     1>e:\gameproject\game demo\game demo\firststage.cpp(501): warning C4305: '=' : truncation from 'double' to 'float'
+         Button.cpp
+     1>e:\gameproject\game demo\game demo\button.cpp(5): warning C4244: 'initializing' : conversion from 'float' to 'LONG', possible loss of data
+         Generating Code...
+         Skipping... (no relevant changes detected)
+         MyDirect.cpp
+         MainWindows.cpp
        Link:
          C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"E:\GameProject\Game Demo\Debug\Game Demo.exe" /INCREMENTAL /NOLOGO /LIBPATH:"C:\Program Files (x86)\Microsoft DirectX SDK (June 2010)\Lib\x86" kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"E:\GameProject\Game Demo\Debug\Game Demo.pdb" /SUBSYSTEM:WINDOWS /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"E:\GameProject\Game Demo\Debug\Game Demo.lib" /MACHINE:X86 Debug\Barrier.obj
          Debug\Button.obj
@@ -16,4 +49,4 @@
 
 Build succeeded.
 
-Time Elapsed 00:00:03.76
+Time Elapsed 00:00:15.24

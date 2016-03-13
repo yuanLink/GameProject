@@ -18,6 +18,7 @@ FirstStage::FirstStage(){
 	font_arial = NULL;//字体
 	spaceButton = false;
 	nextDialog = false;
+	DialogEvent = false;
 
 	button = NULL;//按钮的个数
 	
@@ -28,6 +29,7 @@ FirstStage::FirstStage(){
 	Character.velx = Character.vely = SPEED;//设定角色的行动速度
 
 	menu_pos.x = 0; menu_pos.y = 568;//菜单栏的默认位置
+	canMove = true;//默认是可以移动的
 
 	game_state = STAGE_INIT;//游戏的当前状态
 
@@ -189,8 +191,9 @@ bool FirstStage::Stage_Init(HWND hwnd){
 }
 
 void FirstStage::Stage_Run(){
-	static bool canMove = true;				//加入进入了剧情或者什么别的，则此时不允许移动
+	//static bool canMove = true;				//加入进入了剧情或者什么别的，则此时不允许移动
 	static bool dialogSpaceButton = false;	//没办法……实在是不能联系起来用啊……这个是专门用来处理对话框的bool类型变量
+	static bool barrierIsDialoging = true;	//做大死……想不到如何区别
 	//游戏运行首先要更新设备（在外部处理了）
 	//然后这里假设在外部进行了Clear(清理）、
 	//开始进行操作的更新：
@@ -310,9 +313,11 @@ void FirstStage::Stage_Run(){
 			canMove = reserchHere(Character, tool[0], canMove);
 		}
 		
-		//------------------------------------------
+		//-------------------------------------------
 		//     -*-   -*- 对话是否发生   -*- -*- 
-		
+		//--------------------------------------------
+
+		/*
 		if (!canMove){
 			//此时说明，正在发生谈话的时间
 			//假如按下space键(注意这个的功能：可以检测是否重复按下）
@@ -329,9 +334,11 @@ void FirstStage::Stage_Run(){
 			else{
 			//否则的话重新回复到没有按下按钮，并且不进入下一段
 				dialogSpaceButton = false;
+				//nextDialog = false;
 			}
 
 		}
+		*/
 		//------------------------------------------------------
 
 
@@ -390,8 +397,10 @@ void FirstStage::Stage_Draw(){
 
 		//然后是道具的相关对话框
 		if (barrier[i].dialog_show){
-			barrier[i].ShowSelectedText();
-			barrier[i].dialogIsShowing = true;
+			if (barrier[i].ShowSelectedText()){
+				DialogEvent = false;
+				canMove = true;
+			}
 		}
 	}
 
@@ -406,7 +415,10 @@ void FirstStage::Stage_Draw(){
 		if (tool[i].dialog_show){
 		//这里注意，由于会有多个对话框的情况，所以这里的绘制需要一个变量来控制一下是否结束
 		//这里记为，若还没有结束对话，则返回值为false，结束了的话返回true
-			tool[i].dialogIsShowing = tool[i].ShowSelectedText(nextDialog);
+			if (tool[i].ShowSelectedText(nextDialog)){
+				DialogEvent = false;
+				canMove = true;
+			}
 		}
 	}
 
@@ -472,49 +484,68 @@ bool FirstStage::reserchHere(SPRITE& Character,SPRITE &object,bool canMove)
 	行动，而且不用再次进行调查以减少游戏负荷（？），并且同时只进行外部的对话框事件，当对话框结束的时候，将camMove
 	调整为true，使游戏继续进行
 	*/
-	//当canMove为false的时候，正在发生对话，此时没有必要进行接下来的操作（？为了防止此时对与space的检测）
-	//if (!canMove)
-	//	return canMove;
 	
-	//碰撞测试，得到角色与哪个物品发生了碰撞
-	int temp_collision;
-	temp_collision = CollisionD(Character, object);
-	if (temp_collision == LEFT_COLLISION)
-		Character.velx = SPEED;
-	else if (temp_collision == RIGHT_COLLISION)
-		Character.velx = -SPEED;
-	else if (temp_collision == UP_COLLISION)
-		Character.vely = -SPEED;
-	else if (temp_collision == BOTTOM_COLLISION)
-		Character.vely = SPEED;
+	//判断对话发生事件 是否发生
+	//1、没有发生
+	if (!DialogEvent){
+		//碰撞测试，得到角色与哪个物品发生了碰撞
+		int temp_collision;
+		temp_collision = CollisionD(Character, object);
+		if (temp_collision == LEFT_COLLISION)
+			Character.velx = SPEED;
+		else if (temp_collision == RIGHT_COLLISION)
+			Character.velx = -SPEED;
+		else if (temp_collision == UP_COLLISION)
+			Character.vely = -SPEED;
+		else if (temp_collision == BOTTOM_COLLISION)
+			Character.vely = SPEED;
 
-	//然后，判断是否会进行调查(注意，如果此时已经显示了对话框，则不能再次显示）
-	float temp_destx = abs(Character.x + Character.width / 2 - (object.x + object.width / 2));
-	float temp_desty = abs(Character.y + Character.height / 2 - (object.y + object.height / 2));
+		//然后，判断是否会进行调查(注意，如果此时已经显示了对话框，则不能再次显示）
+		float temp_destx = abs(Character.x + Character.width / 2 - (object.x + object.width / 2));
+		float temp_desty = abs(Character.y + Character.height / 2 - (object.y + object.height / 2));
 
-	//判断是否已经可以调查
-	if (temp_destx < Character.width / 2 + object.width / 2 + 30 &&
-		temp_desty < Character.height / 2 + object.height / 2 + 30){
-		if (Key_Down(DIK_SPACE) && !object.dialog_show &&!object.dialogIsShowing){
-			if (!spaceButton){
-				//MessageBox(NULL, "SPACE!", "SPAXE", MB_OK);
-				object.dialog_show = true;
-				spaceButton = true;
-				canMove = false;
+		//判断是否已经可以调查
+		if (temp_destx < Character.width / 2 + object.width / 2 + 30 &&
+			temp_desty < Character.height / 2 + object.height / 2 + 30){
+			if (Key_Down(DIK_SPACE) && !object.dialog_show &&!object.dialogIsShowing){
+				if (!spaceButton){
+					//MessageBox(NULL, "SPACE!", "SPAXE", MB_OK);
+					object.dialog_show = true;
+					spaceButton = true;
+					canMove = false;
+					DialogEvent = true;
+				}
 			}
-		}
-		//但是，如果对话框已经绘制出来，并且还是按下了按钮的话，就不在绘制
-		else if (object.dialog_show&&Key_Down(DIK_SPACE) && object.dialogIsShowing){
-			if (!spaceButton){
-				object.dialog_show = false;
-				spaceButton = true;
-				object.dialogIsShowing = false;
-				canMove = true;
+			//但是，如果对话框已经绘制完成，并且还是按下了按钮的话，就不在绘制
+			/*else if (object.dialog_show&&Key_Down(DIK_SPACE) && object.dialogIsShowing){
+				if (!spaceButton){
+					object.dialog_show = false;
+					spaceButton = true;
+					object.dialogIsShowing = false;
+					canMove = true;
+				}
 			}
+			*/
+			else
+				spaceButton = false;
 		}
-		else
-			spaceButton = false;
 	}
-
+	//假如对话事件发生的话
+	else{
+		//假如此时需要展示对话的话
+		if (object.dialog_show){
+			if (Key_Down(DIK_SPACE)){
+				if (!spaceButton){
+					//此时进入下一句话
+					object.nextDialog = true;
+					spaceButton = true;
+				}
+			}
+			else
+				spaceButton = false;
+		}
+		
+				
+	}
 	return canMove;
 }
