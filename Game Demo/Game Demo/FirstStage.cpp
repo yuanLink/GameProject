@@ -17,6 +17,7 @@ FirstStage::FirstStage(){
 	dialog = new string[1];//对话框只有一个
 	font_arial = NULL;//字体
 	spaceButton = false;
+	nextDialog = false;
 
 	button = NULL;//按钮的个数
 	
@@ -189,6 +190,7 @@ bool FirstStage::Stage_Init(HWND hwnd){
 
 void FirstStage::Stage_Run(){
 	static bool canMove = true;				//加入进入了剧情或者什么别的，则此时不允许移动
+	static bool dialogSpaceButton = false;	//没办法……实在是不能联系起来用啊……这个是专门用来处理对话框的bool类型变量
 	//游戏运行首先要更新设备（在外部处理了）
 	//然后这里假设在外部进行了Clear(清理）、
 	//开始进行操作的更新：
@@ -297,54 +299,39 @@ void FirstStage::Stage_Run(){
 		//------------------------------------------------------
 		//   -*- -*- -*- 物品的碰撞测试  -*- -*- -*-
 		int temp_collision = 0;//默认未发生碰撞
+		//这里使用的是researchHere，但是我建议此时要增加一个判断，加入canMove为false的时候，全部不进行space
+		//的检测而跳出循环
 		for (int i = 0; i < numOfBarrier; i++){
 			canMove = reserchHere(Character, barrier[i],canMove);
-			/*
-			//碰撞测试，得到角色与哪个物品发生了碰撞
-			temp_collision = CollisionD(Character, barrier[i]);
-			if (temp_collision == LEFT_COLLISION)
-				Character.velx = SPEED;
-			else if (temp_collision == RIGHT_COLLISION)
-				Character.velx = -SPEED;
-			else if (temp_collision == UP_COLLISION)
-				Character.vely = -SPEED;
-			else if (temp_collision == BOTTOM_COLLISION)
-				Character.vely = SPEED;
-
-			//然后，判断是否会进行调查(注意，如果此时已经显示了对话框，则不能再次显示）
-			float temp_destx = abs(Character.x +Character.width/2- (barrier[i].x + barrier[i].width/2));
-			float temp_desty = abs(Character.y + Character.height/2- (barrier[i].y+ barrier[i].height / 2));
-
-			//判断是否已经可以调查
-			if (temp_destx < Character.width / 2 + barrier[i].width / 2 + 30 &&
-				temp_desty < Character.height / 2 + barrier[i].height / 2 + 30)
-				if (Key_Down(DIK_SPACE) && !barrier[i].dialog_show &&!barrier[i].dialogIsShowing){
-					if (!spaceButton){
-						barrier[i].dialog_show = true;
-						spaceButton = true;
-						canMove = false;
-					}
-				}
-			//但是，如果对话框已经绘制出来，并且还是按下了按钮的话，就不在绘制
-				else if (barrier[i].dialog_show&&Key_Down(DIK_SPACE)&&barrier[i].dialogIsShowing){
-					if (!spaceButton){
-						barrier[i].dialog_show = false;
-						spaceButton = true;
-						barrier[i].dialogIsShowing = false;
-						canMove = true;
-					}
-				}
-				else
-					spaceButton = false;
-					*/
-					
 		}
 		
 		//当然，道具也是不能跨越的
 		for (int i = 0; i < numOfTool; i++){
 			canMove = reserchHere(Character, tool[0], canMove);
 		}
-		//一个一个阶段来吧，现在先把这些基本的函数确定了先
+		
+		//------------------------------------------
+		//     -*-   -*- 对话是否发生   -*- -*- 
+		
+		if (!canMove){
+			//此时说明，正在发生谈话的时间
+			//假如按下space键(注意这个的功能：可以检测是否重复按下）
+			if (Key_Down(DIK_SPACE)){
+				//此时如果上一次未按下的话，spaceButton为false，并且
+				if (!dialogSpaceButton){
+					//此时进入下一段对话
+					nextDialog = true;
+					dialogSpaceButton = true;
+				}
+				else
+					nextDialog = false;
+			}
+			else{
+			//否则的话重新回复到没有按下按钮，并且不进入下一段
+				dialogSpaceButton = false;
+			}
+
+		}
 		//------------------------------------------------------
 
 
@@ -365,8 +352,11 @@ void FirstStage::Stage_Run(){
 		barrier[1].x -= stage_valx;
 		barrier[1].y -= stage_valy;
 
+		tool[0].x -= stage_valx;
+		tool[0].y -= stage_valy;
+
 		//在操作定下来之后，我们开始绘制需要的部分
-	}
+	}//end if game == GAME_STATE
 }
 
 //======================================================
@@ -416,7 +406,7 @@ void FirstStage::Stage_Draw(){
 		if (tool[i].dialog_show){
 		//这里注意，由于会有多个对话框的情况，所以这里的绘制需要一个变量来控制一下是否结束
 		//这里记为，若还没有结束对话，则返回值为false，结束了的话返回true
-			tool[i].dialogIsShowing = tool[i].ShowSelectedText();
+			tool[i].dialogIsShowing = tool[i].ShowSelectedText(nextDialog);
 		}
 	}
 
@@ -482,6 +472,10 @@ bool FirstStage::reserchHere(SPRITE& Character,SPRITE &object,bool canMove)
 	行动，而且不用再次进行调查以减少游戏负荷（？），并且同时只进行外部的对话框事件，当对话框结束的时候，将camMove
 	调整为true，使游戏继续进行
 	*/
+	//当canMove为false的时候，正在发生对话，此时没有必要进行接下来的操作（？为了防止此时对与space的检测）
+	//if (!canMove)
+	//	return canMove;
+	
 	//碰撞测试，得到角色与哪个物品发生了碰撞
 	int temp_collision;
 	temp_collision = CollisionD(Character, object);

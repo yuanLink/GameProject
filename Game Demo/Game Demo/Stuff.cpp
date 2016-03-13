@@ -38,20 +38,31 @@ bool Stuff::isVisible(){
 }
 
 //No.3 显示发生调查后的对话框，返回值为false时停止调用
-bool Stuff::ShowSelectedText(){
-	static int index = 0;
-	if (!dialog_image)
+bool Stuff::ShowSelectedText(bool SpaceButton){
+	static int index = -1;
+	/*
+	当发生了第一段的绘制之后（要完成了以后，就是说返回值都已经返回了以后）此时进行判断，若此时是“正在展示画面”（也就是
+	isShowing 这个变量为false，而show为true的时候，表明此时正在显示），则此时的判断变成了“是否按下了space”，这个可能
+	在主程序中也需要更改
+	*/
+	//进入下一段对话(此时保证index不为0，不然的话会跳掉第一段）
+	if (SpaceButton)
+		index++;
+	if (!dialog_image){
+		//dialog_show = false;
 		return false;
-	if (index == dialog_num)
+	}
+	if (index == dialog_num){
+		index = -1;
 		return true;
+	}
 
 	//然后绘制对话框
 	D3DXVECTOR3 position = { 0, SCREENH - 180, 0 };
 	spriteobj->Draw(dialog_image, NULL, NULL, &position, 0xFFFFFFFF);
 	//紧接着就绘制对话内容
 	PrintFont(font_garamond, 30, SCREENH - 128, dialog[index], D3DCOLOR_XRGB(255, 255, 200));
-	//进入下一段对话
-	index++;
+	
 	//此时还没有结束，于是返回false
 	return false;
 }

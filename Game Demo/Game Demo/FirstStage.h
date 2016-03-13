@@ -29,6 +29,7 @@ class FirstStage :public Stage{
 	int backgroundWidth, backgroundHeight;	//地图的长度和宽度
 	int numOfBarrier;						//	物品的数量
 	int numOfTool;							//工具的数量
+	bool nextDialog;						//在对话功能上的“空格是否按下的判断”
 
 	/*
 	对于对话框的处理：

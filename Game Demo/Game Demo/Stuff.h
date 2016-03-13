@@ -29,8 +29,8 @@ public:
 	//No.2 返回值为该物品是否在大地图可见
 	bool isVisible();
 
-	//No.3 显示发生调查后的对话框，返回值为false时停止调用
-	bool ShowSelectedText();
+	//No.3 显示发生调查后的对话框，返回值为false时停止调用(利用SpaceButton来实现对同一段对话的不断更新）
+	bool ShowSelectedText(bool SpaceButton);
 
 	//No.4 用来读取放大图片
 	void setImage(string filename, D3DCOLOR transcolor = D3DCOLOR_XRGB(0, 0, 0));
